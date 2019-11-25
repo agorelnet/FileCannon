@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_filecannon" default="compile.module.filecannon">
+  <dirname property="module.filecannon.basedir" file="${ant.file.module_filecannon}"/>
+  
+  <property name="module.jdk.home.filecannon" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.filecannon" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.filecannon" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.filecannon" value="-encoding UTF-8 -source 11 -target 11 ${compiler.args}"/>
+  
+  <property name="filecannon.output.dir" value="${module.filecannon.basedir}/out/production/FileCannon"/>
+  <property name="filecannon.testoutput.dir" value="${module.filecannon.basedir}/out/test/FileCannon"/>
+  
+  <path id="filecannon.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="filecannon.module.production.classpath">
+    <path refid="${module.jdk.classpath.filecannon}"/>
+  </path>
+  
+  <path id="filecannon.runtime.production.module.classpath">
+    <pathelement location="${filecannon.output.dir}"/>
+  </path>
+  
+  <path id="filecannon.module.classpath">
+    <path refid="${module.jdk.classpath.filecannon}"/>
+    <pathelement location="${filecannon.output.dir}"/>
+  </path>
+  
+  <path id="filecannon.runtime.module.classpath">
+    <pathelement location="${filecannon.testoutput.dir}"/>
+    <pathelement location="${filecannon.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.filecannon">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.filecannon">
+    <patternset refid="excluded.from.module.filecannon"/>
+  </patternset>
+  
+  <path id="filecannon.module.sourcepath">
+    <dirset dir="${module.filecannon.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.filecannon" depends="compile.module.filecannon.production,compile.module.filecannon.tests" description="Compile module FileCannon"/>
+  
+  <target name="compile.module.filecannon.production" depends="register.custom.compilers" description="Compile module FileCannon; production classes">
+    <mkdir dir="${filecannon.output.dir}"/>
+    <javac2 destdir="${filecannon.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.filecannon}/javac">
+      <compilerarg line="${compiler.args.filecannon}"/>
+      <bootclasspath refid="filecannon.module.bootclasspath"/>
+      <classpath refid="filecannon.module.production.classpath"/>
+      <src refid="filecannon.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.filecannon"/>
+    </javac2>
+    
+    <copy todir="${filecannon.output.dir}">
+      <fileset dir="${module.filecannon.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.filecannon.tests" depends="register.custom.compilers,compile.module.filecannon.production" description="compile module FileCannon; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.filecannon" description="cleanup module">
+    <delete dir="${filecannon.output.dir}"/>
+    <delete dir="${filecannon.testoutput.dir}"/>
+  </target>
+</project>
