@@ -16,6 +16,7 @@ public class FileProcessor {
         this("", new byte[0]);
     }
 
+
     /**
      * Creates a file processor -- used by the client
      * @param fileName The file to use
